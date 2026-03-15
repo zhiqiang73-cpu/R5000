@@ -11,7 +11,7 @@ from typing import Optional
 
 from src.layers.environment import EnvironmentResult
 from src.layers.classifier import ClassificationResult
-from src.risk.position import calculate_grade, calculate_position, downgrade_grade
+from src.risk.position import calculate_grade, calculate_position, calculate_position_dynamic_leverage, downgrade_grade
 
 
 @dataclass
@@ -122,8 +122,8 @@ def execute_signal(
             take_profit = price_before + atr_1min * Decimal("0.5")
 
         # 均值回归：高胜率策略，RR 要求低于趋势跟随
-        # 若分类正确（无清算 = 市场自发吸收 → 价格必回归），胜率 > 55%，1.0x RR 已有正期望
-        rr_threshold = Decimal("1.0")
+        # 若分类正确（无清算 = 市场自发吸收 → 价格必回归），胜率 > 55%，1.5x RR 以覆盖手续费
+        rr_threshold = Decimal("1.5")
         time_stop = 180
         trailing_stop = False
         entry_expiry = None
@@ -190,11 +190,23 @@ def execute_signal(
     if grade == "SKIP":
         return None
 
-    # ── 仓位计算 ─────────────────────────────────────────────────────
+    # ── 仓位计算（动态杠杆）──────────────────────────────────────────────────
     capital_base = available_balance if available_balance is not None else balance
     if capital_base <= 0:
         return None
-    quantity = calculate_position(grade, risk_dist, capital_base, entry_price, leverage)
+    
+    # 根据环境决定是否使用动态杠杆
+    use_dynamic_leverage = (
+        classification.confidence >= Decimal("0.6")  # 信心度>=0.6才启用
+        and environment.status == "可交易"  # 环境可交易
+    )
+    
+    if use_dynamic_leverage:
+        quantity = calculate_position_dynamic_leverage(
+            grade, risk_dist, capital_base, entry_price, classification.confidence
+        )
+    else:
+        quantity = calculate_position(grade, risk_dist, capital_base, entry_price, leverage)
 
     return TradeSignal(
         side=side,
