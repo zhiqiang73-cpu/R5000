@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/*.log
+
+# Data (数据文件太大，不提交GitHub)
+data/raw/*.jsonl
+data/raw/*/
+data/processed/
+data/backtest/
+
+# 回测结果（可选择性提交）
+backtest_result.json
+backtest_log.txt
+
+# 临时文件
+*.tmp
+*.bak
+*.backup
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 敏感信息
+.env
+*.secret
+config.private.yaml
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
