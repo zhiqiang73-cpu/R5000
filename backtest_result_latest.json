@@ -1,0 +1,18 @@
+{
+  "metrics": {
+    "total_trades": 8,
+    "total_pnl": 1.65,
+    "win_rate": 0.25,
+    "expectancy": 0.2064,
+    "sharpe": 0.03,
+    "max_drawdown": 0.0052,
+    "impact_count": 86,
+    "classification_count": 48
+  },
+  "date_range": "2026-03-08 ~ 2026-03-15",
+  "data_points": {
+    "trades": 12773956,
+    "liquidations": 7752
+  },
+  "generated_at": "2026-03-15T21:41:43.930076"
+}
