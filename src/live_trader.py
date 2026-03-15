@@ -625,11 +625,19 @@ class LiveTrader:
             exit_time = int(time.time())
             duration_sec = exit_time - entry_time
 
-            # 计算PnL（未扣除手续费）
+            # 计算PnL（扣除双边手续费）
+            # Binance Taker费率：0.05% * 2 = 0.10%
+            FEE_RATE = Decimal("0.001")  # 0.1%
+
             if side == "BUY":
-                pnl = (exit_price - entry_price) * qty
+                gross_pnl = (exit_price - entry_price) * qty
+                # 双边手续费：入场费 + 出场费
+                fee = (entry_price * qty + exit_price * qty) * FEE_RATE
+                pnl = gross_pnl - fee
             else:  # SELL
-                pnl = (entry_price - exit_price) * qty
+                gross_pnl = (entry_price - exit_price) * qty
+                fee = (entry_price * qty + exit_price * qty) * FEE_RATE
+                pnl = gross_pnl - fee
 
             # 更新统计
             self.total_pnl += pnl
